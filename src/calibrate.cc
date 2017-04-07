@@ -181,9 +181,9 @@ namespace sotStateObservation
 
     void Calibrate::calibrate(const int& inTime)
     {
-        const stateObservation::Vector& imuIn=convertVector<stateObservation::Vector>(imuSIN.access(inTime));
-        const stateObservation::Vector& contactsPositionRotIn=convertVector<stateObservation::Vector>(contactsPositionSIN.access(inTime));
-        const stateObservation::Vector& comIn=convertVector<stateObservation::Vector>(comSIN.access(inTime));
+        const stateObservation::Vector& imuIn=(imuSIN.access(inTime));
+        const stateObservation::Vector& contactsPositionRotIn=(contactsPositionSIN.access(inTime));
+        const stateObservation::Vector& comIn=(comSIN.access(inTime));
         const int& contactsNbr=contactsNbrSIN.access(inTime);
 
         if(currentStep_ < nbStep_)
@@ -239,20 +239,20 @@ namespace sotStateObservation
 
     dynamicgraph::Vector& Calibrate::computeImu(dynamicgraph::Vector & imuOut, const int& inTime)
     {
-        const stateObservation::Vector& imuIn=convertVector<stateObservation::Vector>(imuSIN.access(inTime));
+        const stateObservation::Vector& imuIn=(imuSIN.access(inTime));
 
         if(calibrate_==true && inTime!=inTime_){
             calibrate(inTime);
         }
 
         stateObservation::Vector prod=R_*imuIn;
-        imuOut=convertVector<dynamicgraph::Vector>(prod);
+        imuOut=(prod);
         return imuOut;
     }
 
     dynamicgraph::Vector& Calibrate::computeContactsPosition(dynamicgraph::Vector & contactsPositionOut, const int& inTime)
     {
-        const stateObservation::Vector& contactsPositionIn=convertVector<stateObservation::Vector>(contactsPositionSIN.access(inTime));
+        const stateObservation::Vector& contactsPositionIn=(contactsPositionSIN.access(inTime));
 
         if(calibrate_==true && inTime!=inTime_){
             calibrate(inTime);
@@ -262,7 +262,7 @@ namespace sotStateObservation
         sum=contactsPositionIn;
         sum.block(0,0,3,1)+=tc_.block(0,0,3,1);
         sum.block(6,0,3,1)+=tc_.block(3,0,3,1);
-        contactsPositionOut=convertVector<dynamicgraph::Vector>(sum);
+        contactsPositionOut=(sum);
         return contactsPositionOut;
     }
 

@@ -25,15 +25,9 @@
 #include <dynamic-graph/signal-time-dependent.h>
 #include <dynamic-graph/linear-algebra.h>
 
-//#include <sot/core/matrix-rotation.hh>
-//#include <sot/core/matrix-homogeneous.hh>
-//#include <sot/core/multi-bound.hh>
-#include <sot/core/vector-utheta.hh>
-//#include <sot/core/vector-roll-pitch-yaw.hh>
-
-#include <sot/core/matrix-homogeneous.hh>
+#include <sot/core/matrix-geoemtry.hh>
 #include <state-observation/tools/miscellaneous-algorithms.hpp>
-#include <sot-state-observation/tools/definitions.hh>
+
 
 namespace sotStateObservation
 {

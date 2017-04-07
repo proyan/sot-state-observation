@@ -79,7 +79,7 @@ namespace sotStateObservation
                         -1.94301e-07,1,-2.70566e-12,0.095,
                         -2.363e-10,2.70562e-12,1,3.03755e-06,
                         0,0,0,1;
-        leftFootPositionSIN_.setConstant(convertMatrix<dynamicgraph::Matrix>(leftFootPos));
+        leftFootPositionSIN_.setConstant((leftFootPos));
         leftFootPositionSIN_.setTime (time_);
 
         stateObservation::Matrix rightFootPos;
@@ -88,7 +88,7 @@ namespace sotStateObservation
                         9.184e-18,1,-1.10345e-16,-0.095,
                         1.68756e-16,1.10345e-16,1,2.55006e-07,
                         0,0,0,1;
-        rightFootPositionSIN_.setConstant(convertMatrix<dynamicgraph::Matrix>(rightFootPos));
+        rightFootPositionSIN_.setConstant((rightFootPos));
         rightFootPositionSIN_.setTime (time_);
 
         stateObservation::Vector forceRightFoot;
@@ -99,7 +99,7 @@ namespace sotStateObservation
                             1.12135,
                             -14.5562,
                             1.89125;
-        forceRightFootSIN_.setConstant(convertVector<dynamicgraph::Vector>(forceRightFoot));
+        forceRightFootSIN_.setConstant((forceRightFoot));
         forceRightFootSIN_.setTime (time_);
 
         stateObservation::Vector forceLeftFoot;
@@ -110,7 +110,7 @@ namespace sotStateObservation
                             -1.00715,
                             -14.5158,
                             -1.72017;
-        forceLeftFootSIN_.setConstant(convertVector<dynamicgraph::Vector>(forceLeftFoot));
+        forceLeftFootSIN_.setConstant((forceLeftFoot));
         forceLeftFootSIN_.setTime (time_);
 
         supportPos1_.setZero();

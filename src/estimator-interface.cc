@@ -30,7 +30,6 @@
 #include <math.h>
 
 #include <state-observation/tools/definitions.hpp>
-#include <sot-state-observation/tools/definitions.hh>
 #include <state-observation/tools/miscellaneous-algorithms.hpp>
 
 #include <sot-state-observation/estimator-interface.hh>
@@ -109,29 +108,29 @@ namespace sotStateObservation
         signalRegistration (positionLeftFootSIN_ << velocityLeftFootSIN_ << forceLeftFootSIN_);
         positionLeftFootSIN_.setConstant(pos);
         positionLeftFootSIN_.setTime (timeStackOfContacts_);
-        velocityLeftFootSIN_.setConstant(convertVector<dynamicgraph::Vector>(velocity));
+        velocityLeftFootSIN_.setConstant((velocity));
         velocityLeftFootSIN_.setTime (timeStackOfContacts_);
-        forceLeftFootSIN_.setConstant(convertVector<dynamicgraph::Vector>(force));
+        forceLeftFootSIN_.setConstant((force));
         forceLeftFootSIN_.setTime (timeStackOfContacts_);
 
         signalRegistration (positionRightFootSIN_ << velocityRightFootSIN_ << forceRightFootSIN_);
         positionRightFootSIN_.setConstant(pos);
         positionRightFootSIN_.setTime (timeStackOfContacts_);
-        velocityRightFootSIN_.setConstant(convertVector<dynamicgraph::Vector>(velocity));
+        velocityRightFootSIN_.setConstant((velocity));
         velocityRightFootSIN_.setTime (timeStackOfContacts_);
-        forceRightFootSIN_.setConstant(convertVector<dynamicgraph::Vector>(force));
+        forceRightFootSIN_.setConstant((force));
         forceRightFootSIN_.setTime (timeStackOfContacts_);
 
         signalRegistration (positionLeftHandSIN_ << forceLeftHandSIN_);
         positionLeftHandSIN_.setConstant(pos);
         positionLeftHandSIN_.setTime (timeStackOfContacts_);
-        forceLeftHandSIN_.setConstant(convertVector<dynamicgraph::Vector>(force));
+        forceLeftHandSIN_.setConstant((force));
         forceLeftHandSIN_.setTime (timeStackOfContacts_);
 
         signalRegistration (positionRightHandSIN_ << forceRightHandSIN_);
         positionRightHandSIN_.setConstant(pos);
         positionRightHandSIN_.setTime (timeStackOfContacts_);
-        forceRightHandSIN_.setConstant(convertVector<dynamicgraph::Vector>(force));
+        forceRightHandSIN_.setConstant((force));
         forceRightHandSIN_.setTime (timeStackOfContacts_);
 
         signalRegistration (positionLeftStringSIN_);
@@ -487,7 +486,7 @@ namespace sotStateObservation
     void EstimatorInterface::getDrift(const int& time)
     {
         timeDrift_=time;
-        drift_ = convertVector<stateObservation::Vector>(driftSIN.access (time));
+        drift_ = (driftSIN.access (time));
     }
 
     void EstimatorInterface::getSensorsKineInControlFrame(const int& time)
@@ -515,10 +514,10 @@ namespace sotStateObservation
     {
         timeForces_=time;
 
-        inputForces_[hrp2::contact::rf] = convertVector<stateObservation::Vector>(forceRightFootSIN_.access (time));
-        inputForces_[hrp2::contact::lf] = convertVector<stateObservation::Vector>(forceLeftFootSIN_.access (time));
-        inputForces_[hrp2::contact::rh] = convertVector<stateObservation::Vector>(forceRightHandSIN_.access (time));
-        inputForces_[hrp2::contact::lh] = convertVector<stateObservation::Vector>(forceLeftHandSIN_.access (time));
+        inputForces_[hrp2::contact::rf] = (forceRightFootSIN_.access (time));
+        inputForces_[hrp2::contact::lf] = (forceLeftFootSIN_.access (time));
+        inputForces_[hrp2::contact::rh] = (forceRightHandSIN_.access (time));
+        inputForces_[hrp2::contact::lh] = (forceLeftHandSIN_.access (time));
     }
 
     void EstimatorInterface::transformForcesFrames(const int& time)
@@ -671,16 +670,16 @@ namespace sotStateObservation
        if(time!=timeSensorsPositions_) getSensorsKineInControlFrame(time);
        if(time!=timeContacts_) computeContacts(time);
 
-       const stateObservation::Matrix& inertia=convertMatrix<stateObservation::Matrix>(inertiaSIN.access(time));
-       const stateObservation::Matrix& homoWaist=convertMatrix<stateObservation::Matrix>(positionWaistSIN.access(time));
-       const stateObservation::Vector& comVector=convertVector<stateObservation::Vector>(comVectorSIN.access(time));
-       const stateObservation::Vector& dinertia=convertVector<stateObservation::Vector>(dinertiaSIN.access(time));
-       const stateObservation::Vector& angMomentum=convertVector<stateObservation::Vector>(angMomentumSIN.access(time));
-       const stateObservation::Vector& dangMomentum=convertVector<stateObservation::Vector>(dangMomentumSIN.access(time));
-       const stateObservation::Vector& imuVector=convertVector<stateObservation::Vector>(imuVectorSIN.access(time));
+       const stateObservation::Matrix& inertia=(inertiaSIN.access(time));
+       const stateObservation::Matrix& homoWaist=(positionWaistSIN.access(time));
+       const stateObservation::Vector& comVector=(comVectorSIN.access(time));
+       const stateObservation::Vector& dinertia=(dinertiaSIN.access(time));
+       const stateObservation::Vector& angMomentum=(angMomentumSIN.access(time));
+       const stateObservation::Vector& dangMomentum=(dangMomentumSIN.access(time));
+       const stateObservation::Vector& imuVector=(imuVectorSIN.access(time));
 
-       const stateObservation::Vector& rightStringPosition=convertVector<stateObservation::Vector>(positionRightStringSIN_.access(time));
-       const stateObservation::Vector& leftStringPosition=convertVector<stateObservation::Vector>(positionLeftStringSIN_.access(time));
+       const stateObservation::Vector& rightStringPosition=(positionRightStringSIN_.access(time));
+       const stateObservation::Vector& leftStringPosition=(positionLeftStringSIN_.access(time));
 
 
        if(contactsModel_==1)
@@ -757,8 +756,8 @@ namespace sotStateObservation
        if(time!=timeContacts_) computeContacts(time);
        if(time!=timeDrift_) getDrift(time);
 
-       const stateObservation::Vector& accelerometer=convertVector<stateObservation::Vector>(accelerometerSIN.access(time));
-       const stateObservation::Vector& gyrometer=convertVector<stateObservation::Vector>(gyrometerSIN.access(time));
+       const stateObservation::Vector& accelerometer=(accelerometerSIN.access(time));
+       const stateObservation::Vector& gyrometer=(gyrometerSIN.access(time));
 
        measurement_.resize(6+withUnmodeledMeasurements_*6+withModeledForces_*modeledContactsNbr_*6+withAbsolutePose_*6); measurement_.setZero();
        measurement_.segment(0,3)=accelerometer;

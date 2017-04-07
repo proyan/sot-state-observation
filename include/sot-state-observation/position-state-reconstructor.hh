@@ -7,11 +7,9 @@
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
 #include <dynamic-graph/linear-algebra.h>
-#include <sot/core/matrix-homogeneous.hh>
+#include <sot/core/matrix-geometry.hh>
 
 #include <sot/core/flags.hh>
-
-#include <sot-state-observation/tools/definitions.hh>
 
 
 #include <state-observation/tools/miscellaneous-algorithms.hpp>

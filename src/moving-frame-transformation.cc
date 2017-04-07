@@ -8,8 +8,6 @@
 
 
 #include <dynamic-graph/factory.h>
-#include <jrl/mal/matrixabstractlayervector3jrlmath.hh>
-#include <sot/core/vector-utheta.hh>
 
 #include <sot-state-observation/moving-frame-transformation.hh>
 
@@ -163,22 +161,14 @@ namespace sotStateObservation
       velocity.resize(6);
     }
 
-    dynamicgraph::Vector gOmegal(getSubvector(gVl,3,3));
+    const dynamicgraph::Vector& gOmegal = gVl.segment<3>(3);
 
-    dynamicgraph::Vector tdot = crossProduct(gOmegal , gRl * lT0)
-                                + gRl * getSubvector(lV0,0,3)
-                                + getSubvector(gVl,0,3);
-
-    setSubvector(velocity, 0, tdot );
+    velocity.head<3>() = gOmegal.cross(gRl * lT0)
+      + gRl * lV0.head<3>()
+      + gVl.head<3>();
 
     if (!pointMode_)
-    {
-
-
-      dynamicgraph::Vector omega = gRl * getSubvector(lV0,3,3) + gOmegal;
-
-      setSubvector(velocity, 3, omega);
-    }
+      velocity.segment<3>(3) = gRl * lV0.segment<3>(3) + gOmegal;
 
     return velocity;
 
@@ -222,27 +212,20 @@ namespace sotStateObservation
     }
 
 
-    dynamicgraph::Vector gOmegal(getSubvector(gVl,3,3));
+    const Eigen::Vector3d& gOmegal = gVl.segment<3>(3);
 
-    dynamicgraph::Vector gOmegaDotl(getSubvector(gAl,3,3));
-
-
-    dynamicgraph::Vector tddot =  crossProduct(gOmegaDotl , gRl * lT0)
-                               + crossProduct(gOmegal , crossProduct(gOmegal,gRl * lT0))
-                               + 2*crossProduct(gOmegal , gRl * getSubvector(lV0,0,3))
-                               + gRl * getSubvector(lA0,0,3)
-                               + getSubvector(gAl,0,3);
+    const Eigen::Vector3d& gOmegaDotl = gAl.segment<3>(3);
 
 
-    setSubvector(acceleration, 0, tddot );
-
+    acceleration.head<3>() =  gOmegaDotl.cross(gRl * lT0)
+      + gOmegal.cross(gOmegal.cross(gRl * lT0))
+      + 2*gOmegal.cross(gRl * lV0.head<3>())
+      + gRl * lA0.head<3>()
+      + gAl.head<3>();
 
     if (!pointMode_)
-    {
-      dynamicgraph::Vector omegadot = crossProduct(gOmegal ,gRl * getSubvector(lV0,3,3))
-                                    + gRl * getSubvector(lA0,3,3) + gOmegaDotl;
-      setSubvector(acceleration, 3, omegadot);
-    }
+      acceleration.segment<3>(3) = gOmegal.cross(gRl * lV0.segment<3>(3))
+        + gRl * lA0.segment<3>(3) + gOmegaDotl;
 
     return acceleration;
 
@@ -294,9 +277,8 @@ namespace sotStateObservation
       gM0.extract(t);
       ut.fromMatrix(R);
       position.resize(6);
-      setSubvector(position,0,t);
-      setSubvector(position,3,static_cast<dynamicgraph::Vector>(ut));
-
+      position.head<3> = t;
+      position.tail<3> = ut;
     }
 
     return position;

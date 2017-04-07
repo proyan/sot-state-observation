@@ -17,115 +17,113 @@
 #include <state-observation/observer/extended-kalman-filter.hpp>
 #include <state-observation/tools/miscellaneous-algorithms.hpp>
 
-#include <sot-state-observation/tools/definitions.hh>
-
 namespace sotStateObservation
 {
-        /**
-           \brief
-        */
-        class DGIMUAttitudeEstimation :
-            public dynamicgraph::Entity,
-            private boost::noncopyable //
-        {
-        public:
-            /**
-            \brief Constructor by name
-            */
-            DGIMUAttitudeEstimation(const std::string& inName);
+  /**
+     \brief
+  */
+  class DGIMUAttitudeEstimation :
+    public dynamicgraph::Entity,
+    private boost::noncopyable //
+  {
+  public:
+    /**
+       \brief Constructor by name
+    */
+    DGIMUAttitudeEstimation(const std::string& inName);
 
-            ~DGIMUAttitudeEstimation();
+    ~DGIMUAttitudeEstimation();
 
-            /// Each entity should provide the name of the class it belongs to
-            virtual const std::string& getClassName (void) const
-            {
-                return CLASS_NAME;
-            }
+    /// Each entity should provide the name of the class it belongs to
+    virtual const std::string& getClassName (void) const
+    {
+      return CLASS_NAME;
+    }
 
-            /// Header documentation of the python class
-            virtual std::string getDocString () const
-            {
-                return
-                    "A state observer which takes an IMU and gives the attitude\n";
-            }
+    /// Header documentation of the python class
+    virtual std::string getDocString () const
+    {
+      return
+        "A state observer which takes an IMU and gives the attitude\n";
+    }
 
-            void setStateGuess (const ::dynamicgraph::Vector & xh0)
-            {
-                filter_.setState(convertVector<stateObservation::Vector>(xh0),attitudeSOUT.getTime());
-            }
+    void setStateGuess (const ::dynamicgraph::Vector & xh0)
+    {
+      filter_.setState((xh0),attitudeSOUT.getTime());
+    }
 
-            void setStateGuessCovariance (const ::dynamicgraph::Matrix & p)
-            {
-                filter_.setStateCovariance(convertMatrix<stateObservation::Matrix>(p));
-            }
+    void setStateGuessCovariance (const ::dynamicgraph::Matrix & p)
+    {
+      filter_.setStateCovariance((p));
+    }
 
-            void setSensorsNoiseCovariance (const ::dynamicgraph::Matrix & r)
-            {
-                filter_.setR(convertMatrix<stateObservation::Matrix>(r));
-            }
+    void setSensorsNoiseCovariance (const ::dynamicgraph::Matrix & r)
+    {
+      filter_.setR((r));
+    }
 
-            void setProcessNoiseCovariance (const ::dynamicgraph::Matrix & q)
-            {
-                filter_.setQ(convertMatrix<stateObservation::Matrix>(q));
-            }
+    void setProcessNoiseCovariance (const ::dynamicgraph::Matrix & q)
+    {
+      filter_.setQ((q));
+    }
 
-            void setSamplingPeriod (const double & dt)
-            {
-                imuFunctor_.setSamplingPeriod(dt);
-            }
+    void setSamplingPeriod (const double & dt)
+    {
+      imuFunctor_.setSamplingPeriod(dt);
+    }
 
-            void increment()
-            {
-                attitudeSOUT(attitudeSOUT.getTime()+1);
-            }
-
-
-
-            /**
-            \name Parameters
-            @{
-            */
-        protected:
-            /*
-            \brief Class name
-            */
-            static const std::string CLASS_NAME;
-
-        private:
-            /**
-            Compute the control law
-            */
-            ::dynamicgraph::Vector& computeAttitude
-                        (::dynamicgraph::Vector & Attitude, const int& inTime);
-
-            /**
-            \brief Measurement of the IMU
-            */
-            dynamicgraph::SignalPtr < ::dynamicgraph::Vector, int> measurementSIN;
-
-            /**
-            \brief Input of the dynamical system
-            */
-            dynamicgraph::SignalPtr < ::dynamicgraph::Vector, int> inputSIN;
-
-            /**
-            \brief Estimation of the attitude
-            */
-            dynamicgraph::SignalTimeDependent < ::dynamicgraph::Vector, int> attitudeSOUT;
+    void increment()
+    {
+      attitudeSOUT(attitudeSOUT.getTime()+1);
+    }
 
 
-            ///initialization of the extended Kalman filter
-            stateObservation::ExtendedKalmanFilter filter_;
 
-            ///initalization of the functor
-            stateObservation::IMUDynamicalSystem imuFunctor_;
+    /**
+       \name Parameters
+       @{
+    */
+  protected:
+    /*
+      \brief Class name
+    */
+    static const std::string CLASS_NAME;
 
-            ///Sizes of the states for the state, the measurement, and the input vector
-            static const unsigned stateSize=18;
-            static const unsigned measurementSize=6;
-            static const unsigned inputSize=6;
+  private:
+    /**
+       Compute the control law
+    */
+    ::dynamicgraph::Vector& computeAttitude
+    (::dynamicgraph::Vector & Attitude, const int& inTime);
 
-        };
+    /**
+       \brief Measurement of the IMU
+    */
+    dynamicgraph::SignalPtr < ::dynamicgraph::Vector, int> measurementSIN;
+
+    /**
+       \brief Input of the dynamical system
+    */
+    dynamicgraph::SignalPtr < ::dynamicgraph::Vector, int> inputSIN;
+
+    /**
+       \brief Estimation of the attitude
+    */
+    dynamicgraph::SignalTimeDependent < ::dynamicgraph::Vector, int> attitudeSOUT;
+
+
+    ///initialization of the extended Kalman filter
+    stateObservation::ExtendedKalmanFilter filter_;
+
+    ///initalization of the functor
+    stateObservation::IMUDynamicalSystem imuFunctor_;
+
+    ///Sizes of the states for the state, the measurement, and the input vector
+    static const unsigned stateSize=18;
+    static const unsigned measurementSize=6;
+    static const unsigned inputSize=6;
+
+  };
 
 } // namespace sotStateObservation
 

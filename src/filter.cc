@@ -8,7 +8,6 @@
 #include <dynamic-graph/command-getter.h>
 #include <dynamic-graph/command-bind.h>
 
-#include <state-observation/tools/definitions.hpp>
 #include <state-observation/tools/miscellaneous-algorithms.hpp>
 
 #include <sot-state-observation/filter.hh>
@@ -141,7 +140,7 @@ namespace sotStateObservation
 
     dynamicgraph::Vector& Filter::getOutput(dynamicgraph::Vector& output, const int& time)
     {
-        stateObservation::Vector lastInput=convertVector<stateObservation::Vector>(inputSIN_.access(time));
+        stateObservation::Vector lastInput=(inputSIN_.access(time));
 
         // Update the input window
         u_.push_front(lastInput);
@@ -159,7 +158,7 @@ namespace sotStateObservation
             ++i;
         }
 
-        output=convertVector<Vector>(output_);
+        output=(output_);
         return output;
     }
 }

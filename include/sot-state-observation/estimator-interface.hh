@@ -31,7 +31,7 @@
 
 #include <state-observation/tools/miscellaneous-algorithms.hpp>
 #include <state-observation/tools/hrp2.hpp>
-#include <sot-state-observation/tools/definitions.hh>
+
 
 #include <Eigen/StdVector>
 #include <algorithm>
@@ -87,20 +87,20 @@ namespace sotStateObservation
                 dt_=dt;
             }
 
-            void setForceThresholds(const Vector& forceThresholds)
+            inline void setForceThresholds(const Vector& forceThresholds)
             {
-                forceThresholds_=convertVector<stateObservation::Vector>(forceThresholds);
+                forceThresholds_=forceThresholds;
             }
 
-            dynamicgraph::Vector getForceThresholds() const
+            inline dynamicgraph::Vector getForceThresholds() const
             {
-                return convertVector<dynamicgraph::Vector>(forceThresholds_);
+                return forceThresholds_;
             }
 
             Vector& getInput(Vector& input, const int& time)
             {
                  if(time!=timeInput_) computeInput(time);
-                 input=convertVector<dynamicgraph::Vector>(input_);
+                 input=input_;
                  return input;
             }
 
@@ -117,7 +117,7 @@ namespace sotStateObservation
                  op_.inputConstSize.resize(42+op_.modeledContactsNbrMax*12);
                  op_.inputConstSize.setZero();
                  op_.inputConstSize.segment(0,input_.size()) = input_;
-                 input=convertVector<dynamicgraph::Vector>(op_.inputConstSize);
+                 input=op_.inputConstSize;
 
                  return input;
             }
@@ -125,7 +125,7 @@ namespace sotStateObservation
             Vector& getMeasurement(Vector& measurement, const int& time)
             {
                 if(time!=timeMeasurement_) computeMeasurement(time);
-                measurement=convertVector<dynamicgraph::Vector>(measurement_);
+                measurement=measurement_;
                 return measurement;
             }
 
@@ -144,7 +144,7 @@ namespace sotStateObservation
 
                  op_.measurementConstSize.segment(0,measurement_.size()) = measurement_;
 
-                 measurement=convertVector<dynamicgraph::Vector>(op_.measurementConstSize);
+                 measurement=op_.measurementConstSize;
                  return measurement;
             }
 
@@ -164,7 +164,7 @@ namespace sotStateObservation
                 if(withModeledForces_ & supportContactsNbr_>=1) config_(1)=1;
                 if(withAbsolutePose_) config(2)=1;
 
-                config=convertVector<dynamicgraph::Vector>(config_);
+                config=config_;
                 return config;
             }
 
@@ -196,14 +196,14 @@ namespace sotStateObservation
                  return supportContactsNbr;
             }
 
-            void setLeftFootBias (const ::dynamicgraph::Vector & b)
+            void setLeftFootBias (const dynamicgraph::Vector & b)
             {
-                bias_[0]=convertVector<stateObservation::Vector>(b);
+                bias_[0]=b;
             }
 
-            void setRightFootBias (const ::dynamicgraph::Vector & b)
+            void setRightFootBias (const dynamicgraph::Vector & b)
             {
-                bias_[1]=convertVector<stateObservation::Vector>(b);
+                bias_[1]=b;
             }
 
             void setFDInertiaDot(const bool& b)
@@ -213,14 +213,14 @@ namespace sotStateObservation
 
             void setLastInertia(const dynamicgraph::Matrix & inert)
             {
-                const stateObservation::Matrix& homoWaist=convertMatrix<stateObservation::Matrix>(positionWaistSIN.access(timeInput_));
-                const stateObservation::Vector& comVector=convertVector<stateObservation::Vector>(comVectorSIN.access(timeInput_));
-                computeInert(convertMatrix<stateObservation::Matrix>(inert),homoWaist,comVector,lastInertia_);
+                const stateObservation::Matrix& homoWaist=positionWaistSIN.access(timeInput_);
+                const stateObservation::Vector& comVector=comVectorSIN.access(timeInput_);
+                computeInert(inert,homoWaist,comVector,lastInertia_);
             }
 
             void setLeftHandSensorTransformation(const dynamicgraph::Vector & v)
             {
-                forceSensorsTransformation_[hrp2::contact::lh]=convertVector<stateObservation::Vector>(v);
+                forceSensorsTransformation_[hrp2::contact::lh]=v;
                 
                 stateObservation::Matrix3 Rr, Rp, Ry;
                 Rr << 1, 0,         0,
@@ -249,12 +249,12 @@ namespace sotStateObservation
 
             dynamicgraph::Vector getLeftHandSensorTransformation() const
             {
-                return convertVector<dynamicgraph::Vector>(forceSensorsTransformation_[hrp2::contact::lh]);
+                return forceSensorsTransformation_[hrp2::contact::lh];
             }
 
             void setRightHandSensorTransformation(const dynamicgraph::Vector & v)
             {
-                forceSensorsTransformation_[hrp2::contact::rh]=convertVector<stateObservation::Vector>(v);
+                forceSensorsTransformation_[hrp2::contact::rh]=v;
 
                 stateObservation::Matrix3 Rr, Rp, Ry;
                 Rr << 1, 0,         0,
@@ -273,7 +273,7 @@ namespace sotStateObservation
 
             dynamicgraph::Vector getRightHandSensorTransformation() const
             {
-                return convertVector<dynamicgraph::Vector>(forceSensorsTransformation_[hrp2::contact::rh]);
+                return forceSensorsTransformation_[hrp2::contact::rh];
             }
 
             void setWithUnmodeledMeasurements(const bool & b)
@@ -331,7 +331,7 @@ namespace sotStateObservation
                 if(stackOfSupportContacts_.size()>=1)
                 {
                     iterator = stackOfSupportContacts_.begin();
-                    positionSupport1=convertMatrix<dynamicgraph::Matrix>(inputHomoPosition_[*iterator]);
+                    positionSupport1=inputHomoPosition_[*iterator];
                 }
                 else
                 {
@@ -347,7 +347,7 @@ namespace sotStateObservation
                 {
                     iterator = stackOfSupportContacts_.begin();
                     ++iterator;
-                    positionSupport2=convertMatrix<dynamicgraph::Matrix>(inputHomoPosition_[*iterator]);
+                    positionSupport2=inputHomoPosition_[*iterator];
                 }
                 else
                 {
@@ -362,7 +362,7 @@ namespace sotStateObservation
                 if(stackOfSupportContacts_.size()>=1)
                 {
                     iterator = stackOfSupportContacts_.begin();
-                    forceSupport1=convertVector<dynamicgraph::Vector>(inputForces_[*iterator]);
+                    forceSupport1=inputForces_[*iterator];
                 }
                 else
                 {
@@ -378,7 +378,7 @@ namespace sotStateObservation
                 {
                     iterator = stackOfSupportContacts_.begin();
                     ++iterator;
-                    forceSupport2=convertVector<dynamicgraph::Vector>(inputForces_[*iterator]);
+                    forceSupport2=inputForces_[*iterator];
                 }
                 else
                 {
@@ -395,7 +395,7 @@ namespace sotStateObservation
                 if(stackOfSupportContacts_.size()>=1)
                 {
                     iterator = stackOfSupportContacts_.begin();
-                    velocitySupport1=convertVector<dynamicgraph::Vector>(inputVelocity_[*iterator]);
+                    velocitySupport1=inputVelocity_[*iterator];
                 }
                 else
                 {
@@ -411,7 +411,7 @@ namespace sotStateObservation
                 {
                     iterator = stackOfSupportContacts_.begin();
                     ++iterator;
-                    velocitySupport2=convertVector<dynamicgraph::Vector>(inputVelocity_[*iterator]);
+                    velocitySupport2=inputVelocity_[*iterator];
                 }
                 else
                 {

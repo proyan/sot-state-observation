@@ -2,8 +2,6 @@
 
 #include <dynamic-graph/command-bind.h>
 #include <dynamic-graph/factory.h>
-#include <jrl/mal/matrixabstractlayervector3jrlmath.hh>
-#include <sot/core/vector-utheta.hh>
 
 namespace sotStateObservation
 {

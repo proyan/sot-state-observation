@@ -21,7 +21,7 @@ INCLUDE(cmake/boost.cmake)
 
 SET(PROJECT_NAME sot-state-observation)
 SET(PROJECT_DESCRIPTION "Robot's state observation")
-SET(PROJECT_URL "http://github.com/laas/sot-state-observation")
+SET(PROJECT_URL "http://github.com/stack-of-tasks/sot-state-observation")
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 
@@ -41,10 +41,10 @@ SEARCH_FOR_BOOST()
 SEARCH_FOR_EIGEN()
 
 # Search for dependencies.
-ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 1.0.0")
-ADD_REQUIRED_DEPENDENCY("sot-core >= 1.0.0")
+ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
+ADD_REQUIRED_DEPENDENCY("sot-core >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("state-observation")
-ADD_REQUIRED_DEPENDENCY("dynamic-graph-python")
+ADD_REQUIRED_DEPENDENCY("dynamic-graph-python >=3.0.0")
 
 SET(${PROJECT_NAME}_HEADERS
     include/sot-state-observation/dg-imu-attitude-estimation.hh
@@ -55,7 +55,6 @@ SET(${PROJECT_NAME}_HEADERS
     include/sot-state-observation/calibrate.hh
     include/sot-state-observation/moving-frame-transformation.hh
     include/sot-state-observation/position-state-reconstructor.hh
-    include/sot-state-observation/tools/definitions.hh
     include/sot-state-observation/tools/stop-watch.hh
     include/sot-state-observation/stack-of-contacts.hh
     include/sot-state-observation/odometry.hh

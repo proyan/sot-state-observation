@@ -26,15 +26,11 @@
 #include <dynamic-graph/linear-algebra.h>
 
 //#include <sot/core/matrix-rotation.hh>
-#include <sot/core/matrix-homogeneous.hh>
+#include <sot/core/matrix-geometry.hh>
 //#include <sot/core/multi-bound.hh>
-#include <sot/core/vector-utheta.hh>
-#include <sot/core/vector-roll-pitch-yaw.hh>
 
-#include <sot/core/matrix-homogeneous.hh>
 #include <state-observation/tools/miscellaneous-algorithms.hpp>
 #include <state-observation/tools/hrp2.hpp>
-#include <sot-state-observation/tools/definitions.hh>
 
 #include <Eigen/StdVector>
 #include <algorithm>

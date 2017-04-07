@@ -71,14 +71,14 @@ namespace sotStateObservation
 
     void FromLocalToGlobalFrame::getMandatorySignals(const int& inTime)
     {
-        const stateObservation::Vector& flexState=convertVector<stateObservation::Vector>(flexStateSIN.access(inTime));
+        const stateObservation::Vector& flexState=(flexStateSIN.access(inTime));
         omegaflex_ = flexState.segment(stateObservation::flexibilityEstimation::IMUElasticLocalFrameDynamicalSystem::state::ori,3);
         Rflex_ = stateObservation::kine::rotationVectorToRotationMatrix(omegaflex_);
         tflex_ = flexState.segment(stateObservation::flexibilityEstimation::IMUElasticLocalFrameDynamicalSystem::state::pos,3);
         wflex_ = flexState.segment(stateObservation::flexibilityEstimation::IMUElasticLocalFrameDynamicalSystem::state::angVel,3);
         dtflex_ = flexState.segment(stateObservation::flexibilityEstimation::IMUElasticLocalFrameDynamicalSystem::state::linVel,3);
 
-        sinPos_=convertVector<stateObservation::Vector>(sinPosSIN.access(inTime));
+        sinPos_=(sinPosSIN.access(inTime));
 
         timeGetMandatorySignals_=inTime;
     }
@@ -96,7 +96,7 @@ namespace sotStateObservation
         if(inTime!=timeGetMandatorySignals_) getMandatorySignals(inTime);
         if(inTime!=timeComputeSoutPos_) computeSoutPos(inTime);
 
-        sinVel_ = convertVector<stateObservation::Vector>(sinVelSIN.access(inTime));
+        sinVel_ = (sinVelSIN.access(inTime));
 
         soutVel_ << stateObservation::kine::skewSymmetric(wflex_)*Rflex_*sinPos_.segment<3>(0)+Rflex_*sinVel_.segment<3>(0)+dtflex_,
                     Rflex_*sinVel_.segment<3>(3)+wflex_;

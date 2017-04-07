@@ -1,4 +1,4 @@
-//
+x//
 // Copyright (c) 2015,
 // Alexis Mifsud
 //
@@ -30,7 +30,6 @@
 #include <math.h>
 
 #include <state-observation/tools/definitions.hpp>
-#include <sot-state-observation/tools/definitions.hh>
 #include <state-observation/tools/miscellaneous-algorithms.hpp>
 
 #include <sot-state-observation/odometry.hh>
@@ -103,7 +102,7 @@ namespace sotStateObservation
                         -1.39371e-06, 1, 0.000391702, 0.0940796,
                         -0.00184865, -0.000391703, 0.999998, -0.64868,
                         0, 0, 0, 1;
-        leftFootPositionSIN_.setConstant(convertMatrix<dynamicgraph::Matrix>(leftFootPos));
+        leftFootPositionSIN_.setConstant((leftFootPos));
         leftFootPositionSIN_.setTime (time_);
         inputHomoPosition_[hrp2::contact::lf]=leftFootPos;
         inputPosition_[hrp2::contact::lf]=kine::homogeneousMatrixToVector6(leftFootPos);
@@ -114,7 +113,7 @@ namespace sotStateObservation
                         -5.78281e-06, 1, 6.52873e-05, -0.0958005,
                         -0.00198742, -6.52987e-05, 0.999998, -0.64868,
                         0, 0, 0, 1;
-        rightFootPositionSIN_.setConstant(convertMatrix<dynamicgraph::Matrix>(rightFootPos));
+        rightFootPositionSIN_.setConstant((rightFootPos));
         rightFootPositionSIN_.setTime (time_);
         inputHomoPosition_[hrp2::contact::rf]=rightFootPos;
         inputPosition_[hrp2::contact::rf]=kine::homogeneousMatrixToVector6(rightFootPos);
@@ -125,7 +124,7 @@ namespace sotStateObservation
                            -1.94301e-07,1,-2.70566e-12,0.095,
                            -2.363e-10,2.70562e-12,1,3.03755e-06,
                             0,0,0,1;
-        leftFootPositionRefSIN_.setConstant(convertMatrix<dynamicgraph::Matrix>(leftFootPosRef));
+        leftFootPositionRefSIN_.setConstant((leftFootPosRef));
         leftFootPositionRefSIN_.setTime (time_);
         referenceHomoPosition_[hrp2::contact::lf]=leftFootPosRef;
         referencePosition_[hrp2::contact::lf]=kine::homogeneousMatrixToVector6(referenceHomoPosition_[hrp2::contact::lf]);
@@ -136,7 +135,7 @@ namespace sotStateObservation
                             9.184e-18,1,-1.10345e-16,-0.095,
                             1.68756e-16,1.10345e-16,1,2.55006e-07,
                             0,0,0,1;
-        rightFootPositionRefSIN_.setConstant(convertMatrix<dynamicgraph::Matrix>(rightFootPosRef));
+        rightFootPositionRefSIN_.setConstant((rightFootPosRef));
         rightFootPositionRefSIN_.setTime (time_);
         referenceHomoPosition_[hrp2::contact::rf]=rightFootPosRef;
         referencePosition_[hrp2::contact::rf]=kine::homogeneousMatrixToVector6(referenceHomoPosition_[hrp2::contact::rf]);
@@ -150,7 +149,7 @@ namespace sotStateObservation
                             1.12135,
                             -14.5562,
                             1.89125;
-        forceRightFootSIN_.setConstant(convertVector<dynamicgraph::Vector>(forceRightFoot));
+        forceRightFootSIN_.setConstant((forceRightFoot));
         forceRightFootSIN_.setTime (time_);
         inputForces_[hrp2::contact::rf]=forceRightFoot;
 
@@ -162,14 +161,14 @@ namespace sotStateObservation
                             -1.00715,
                             -14.5158,
                             -1.72017;
-        forceLeftFootSIN_.setConstant(convertVector<dynamicgraph::Vector>(forceLeftFoot));
+        forceLeftFootSIN_.setConstant((forceLeftFoot));
         forceLeftFootSIN_.setTime (time_);
         inputForces_[hrp2::contact::lf]=forceLeftFoot;
 
         stateObservation::Vector v; v.resize(2);
         v << 0.0,
              1.0;
-        stackOfSupportContactsSIN_.setConstant(convertVector<dynamicgraph::Vector>(v));
+        stackOfSupportContactsSIN_.setConstant((v));
         stackOfSupportContactsSIN_.setTime(time_);
 
         op_.posUTheta_.setZero();
@@ -191,14 +190,14 @@ namespace sotStateObservation
     MatrixHomogeneous& Odometry::getHomoLeftFootPos(MatrixHomogeneous& homoLeftFootPos, const int& time)
     {
         if(time!=time_) computeOdometry(time);
-        homoLeftFootPos=convertMatrix<dynamicgraph::Matrix>(odometryHomoPosition_[hrp2::contact::lf]);
+        homoLeftFootPos=(odometryHomoPosition_[hrp2::contact::lf]);
         return homoLeftFootPos;
     }
 
     MatrixHomogeneous& Odometry::getHomoRightFootPos(MatrixHomogeneous& homoRightFootPos, const int& time)
     {
         if(time!=time_) computeOdometry(time);
-        homoRightFootPos=convertMatrix<dynamicgraph::Matrix>(odometryHomoPosition_[hrp2::contact::rf]);
+        homoRightFootPos=(odometryHomoPosition_[hrp2::contact::rf]);
         return homoRightFootPos;
     }
 
@@ -212,14 +211,14 @@ namespace sotStateObservation
         ff << odometryFreeFlyer_.block(0,3,3,1),
               rpy;
 
-        freeFlyer = convertVector<Vector>(ff);
+        freeFlyer = (ff);
         return freeFlyer;
     }
 
     Vector& Odometry::getPivotPositionOut(Vector& pivotPositionOut, const int& time)
     {
         if(time!=time_) computeOdometry(time);
-        pivotPositionOut=convertVector<dynamicgraph::Vector>(kine::homogeneousMatrixToVector6(odometryHomoPosition_[pivotSupport_]));
+        pivotPositionOut=(kine::homogeneousMatrixToVector6(odometryHomoPosition_[pivotSupport_]));
         return pivotPositionOut;
     }
 
@@ -236,11 +235,11 @@ namespace sotStateObservation
 
     void Odometry::getInputs(const int& time)
     {
-        inputForces_[hrp2::contact::rf] = convertVector<stateObservation::Vector>(forceRightFootSIN_.access (time));
+        inputForces_[hrp2::contact::rf] = (forceRightFootSIN_.access (time));
         inputHomoPosition_[hrp2::contact::rf] = convertMatrix<stateObservation::Matrix4>(Matrix(rightFootPositionSIN_.access (time)));
         referenceHomoPosition_[hrp2::contact::rf] = convertMatrix<stateObservation::Matrix4>(rightFootPositionRefSIN_.access (time));
 
-        inputForces_[hrp2::contact::lf] = convertVector<stateObservation::Vector>(forceLeftFootSIN_.access (time));
+        inputForces_[hrp2::contact::lf] = (forceLeftFootSIN_.access (time));
         inputHomoPosition_[hrp2::contact::lf] = convertMatrix<stateObservation::Matrix4>(Matrix(leftFootPositionSIN_.access (time)));
         referenceHomoPosition_[hrp2::contact::lf] = convertMatrix<stateObservation::Matrix4>(leftFootPositionRefSIN_.access (time));
 
@@ -278,7 +277,7 @@ namespace sotStateObservation
         getInputs(time);
 
         /// Get stack and number of contacts
-        stackOfSupportContacts_ = convertVector<stateObservation::Vector>(stackOfSupportContactsSIN_.access (time));
+        stackOfSupportContacts_ = (stackOfSupportContactsSIN_.access (time));
         supportContactsNbr_ = stackOfSupportContacts_.size();
 
         /// Find the pivot support.

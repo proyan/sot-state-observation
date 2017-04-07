@@ -160,10 +160,10 @@ namespace sotStateObservation
         const dynamicgraph::Vector & measurement = measurementSIN(inTime);
         const dynamicgraph::Vector & input = inputSIN(inTime-1);
 
-        filter_.setMeasurement(convertVector<stateObservation::Vector>(measurement),inTime);
-        filter_.setInput(convertVector<stateObservation::Vector>(input),inTime-1);
+        filter_.setMeasurement((measurement),inTime);
+        filter_.setInput((input),inTime-1);
 
-        Attitude = convertVector<dynamicgraph::Vector>(filter_.getEstimatedState(inTime));
+        Attitude = (filter_.getEstimatedState(inTime));
 
         return Attitude;
     }
