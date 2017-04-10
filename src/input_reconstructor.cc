@@ -64,7 +64,7 @@ namespace sotStateObservation
     comVectorSIN.setConstant(comVector);
 
     signalRegistration (inertiaSIN);
-    dynamicgraph::Matrix inertia(6);
+    dynamicgraph::Matrix inertia(6,6);
     inertiaSIN.setConstant(inertia);
 
     signalRegistration (dinertiaSIN);
@@ -329,7 +329,7 @@ namespace sotStateObservation
     double m=inertia(0,0);
 
     dynamicgraph::Vector angMomentumOut, dangMomentumOut;
-    dynamicgraph::Vector com, comdot, comddot;
+    Eigen::Vector3d com, comdot, comddot;
 
     com.resize(3);
     comdot.resize(3);

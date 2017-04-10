@@ -30,7 +30,7 @@
 #include <math.h>
 
 #include <state-observation/tools/definitions.hpp>
-#include <state-observation/tools/miscellaneous-algorithms.hpp>
+#include <sot-state-observation/tools/miscellaneous-algorithms.hpp>
 
 #include <sot-state-observation/estimator-interface.hh>
 
@@ -146,7 +146,7 @@ namespace sotStateObservation
         comVectorSIN.setConstant(comVector);
 
         signalRegistration (inertiaSIN);
-        dynamicgraph::Matrix inertia(6);
+        dynamicgraph::Matrix inertia(6, 6);
         inertiaSIN.setConstant(inertia);
 
         signalRegistration (dinertiaSIN);
@@ -494,19 +494,19 @@ namespace sotStateObservation
         timeSensorsPositions_=time;
 
         // Positions
-        inputHomoPosition_[hrp2::contact::rf] = convertMatrix<stateObservation::Matrix4>(Matrix(positionRightFootSIN_.access (time)));
-        inputHomoPosition_[hrp2::contact::lf] = convertMatrix<stateObservation::Matrix4>(Matrix(positionLeftFootSIN_.access (time)));
-        inputHomoPosition_[hrp2::contact::rh] = convertMatrix<stateObservation::Matrix4>(Matrix(positionRightHandSIN_.access (time)));
-        inputHomoPosition_[hrp2::contact::lh] = convertMatrix<stateObservation::Matrix4>(Matrix(positionLeftHandSIN_.access (time)));
+        inputHomoPosition_[hrp2::contact::rf] = positionRightFootSIN_.access (time);
+        inputHomoPosition_[hrp2::contact::lf] = positionLeftFootSIN_.access (time);
+        inputHomoPosition_[hrp2::contact::rh] = positionRightHandSIN_.access (time);
+        inputHomoPosition_[hrp2::contact::lh] = positionLeftHandSIN_.access (time);
 
         for (int i=0; i<hrp2::contact::nbMax;++i)
         {
-            inputPosition_[i]=kine::homogeneousMatrixToVector6(inputHomoPosition_[i]);
+          homogeneousMatrixToVector6(inputHomoPosition_[i], inputPosition_[i]);
         }
 
         // Velocities
-        inputVelocity_[hrp2::contact::rf] = convertVector<stateObservation::Vector6>(velocityRightFootSIN_.access (time));
-        inputVelocity_[hrp2::contact::lf] = convertVector<stateObservation::Vector6>(velocityLeftFootSIN_.access (time));
+        inputVelocity_[hrp2::contact::rf] = velocityRightFootSIN_.access (time);
+        inputVelocity_[hrp2::contact::lf] = velocityLeftFootSIN_.access (time);
 
     }
 
@@ -530,9 +530,9 @@ namespace sotStateObservation
         for (int i=0; i<hrp2::contact::nbMax;++i)
         {          
             // force sensor position
-            op_.Rc=inputHomoPosition_[i].block(0,0,3,3);
-            op_.Rct=op_.Rc.transpose();
-            op_.pc=inputHomoPosition_[i].block(0,3,3,1);
+          op_.Rc=inputHomoPosition_[i].linear();
+          op_.Rct=op_.Rc.transpose();
+          op_.pc=inputHomoPosition_[i].translation();
 
             // Reorientation of frames
             controlFrameForces_[i] << forceSensorsTransfoMatrix_[i] * inputForces_[i].segment(0,3),

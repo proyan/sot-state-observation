@@ -6,6 +6,7 @@
 
 #include <dynamic-graph/factory.h>
 #include <sot-state-observation/position-state-reconstructor.hh>
+#include <sot-state-observation/tools/miscellaneous-algorithms.hpp>
 
 
 
@@ -46,8 +47,10 @@ namespace sotStateObservation
     linearAccelerations_.push_back(initV);
     angularAccelerations_.push_back(initV);
 
-    dynamicgraph::Vector input(size_t(0));
-    dynamicgraph::Vector ouput(size_t(0));
+    dynamicgraph::Vector input;
+    input <<0;
+    dynamicgraph::Vector output;
+    output<<0;
 
     inputSIN.setConstant(input);
     //        outputSOUT.setConstant(ouput);
@@ -199,7 +202,7 @@ namespace sotStateObservation
 
     /////////////////////
     //Linear position
-    dynamicgraph::Vector position(3);
+    Eigen::Vector3d position;
     bool posSet=true;
 
     if (inputFormat(0))
@@ -242,7 +245,7 @@ namespace sotStateObservation
 
     /////////////////////
     //orientation
-    dynamicgraph::Vector orientation(3);
+    Eigen::Vector3d orientation;
     bool oriSet=true;
 
     if (inputFormat(1))
@@ -295,7 +298,7 @@ namespace sotStateObservation
           {
             outputSize +=3;
             output.resize(outputSize,false);
-            setSubvector(output, outputIndex, orientation);
+            output.segment<3>(outputIndex) = orientation;
             outputIndex +=3;
           }
         else
@@ -305,8 +308,8 @@ namespace sotStateObservation
 
     /////////////////////
     //Linear velocity
-    dynamicgraph::Vector linearVelocity(3);
-    dynamicgraph::Vector curfddLinVel(3);
+    Eigen::Vector3d linearVelocity;
+    Eigen::Vector3d curfddLinVel;
     bool linVelSet=true;
 
     if (inputFormat(2))
@@ -315,8 +318,8 @@ namespace sotStateObservation
       {
         if (inputFormat(0))
           {
-            curfddLinVel = stateObservation::tools::derivate
-              (lastVector_.head<3>(),input.head<3>(),dt_);
+            stateObservation::tools::derivate
+              (lastVector_.head<3>(),input.head<3>(),curfddLinVel, dt_);
 
             linearVelocities_.push_back(curfddLinVel);
 
@@ -352,7 +355,7 @@ namespace sotStateObservation
           {
             outputSize +=3;
             output.resize(outputSize,false);
-            setSubvector(output, outputIndex, linearVelocity);
+            output.segment<3>(outputIndex) = linearVelocity;
             outputIndex +=3;
           }
         else
@@ -362,8 +365,8 @@ namespace sotStateObservation
 
     /////////////////////
     //Angular velocity
-    dynamicgraph::Vector angularVelocity(3);
-    dynamicgraph::Vector curfddAngVel(3);
+    Eigen::Vector3d angularVelocity;
+    Eigen::Vector3d curfddAngVel;
     bool angVelSet = true;
 
     if (inputFormat(3))
@@ -409,7 +412,7 @@ namespace sotStateObservation
           {
             outputSize +=3;
             output.resize(outputSize,false);
-            setSubvector(output, outputIndex, angularVelocity);
+            output.segment<3>(outputIndex) = angularVelocity;
             outputIndex +=3;
           }
         else
@@ -419,8 +422,8 @@ namespace sotStateObservation
 
     /////////////////////
     //Linear acceleration
-    dynamicgraph::Vector linearAcceleration(3);
-    dynamicgraph::Vector curfddLinAcc(3);
+    Eigen::Vector3d linearAcceleration;
+    Eigen::Vector3d curfddLinAcc;
     bool linAccSet = true;
 
     if (inputFormat(4))
@@ -429,8 +432,8 @@ namespace sotStateObservation
       {
         if (linVelSet)
           {
-            curfddLinAcc = stateObservation::tools::derivate
-              (lastVector_.segment<3>(6), linearVelocity, dt_);
+            stateObservation::tools::derivate
+              (lastVector_.segment<3>(6), linearVelocity,curfddLinAcc, dt_);
 
             linearAccelerations_.push_back(curfddLinAcc);
 
@@ -460,7 +463,7 @@ namespace sotStateObservation
           {
             outputSize +=3;
             output.resize(outputSize,false);
-            setSubvector(output, outputIndex, linearAcceleration);
+            output.segment<3>(outputIndex) = linearAcceleration ;
             outputIndex +=3;
           }
         else
@@ -470,8 +473,8 @@ namespace sotStateObservation
 
     /////////////////////
     //Angular acceleration
-    dynamicgraph::Vector angularAcceleration(3);
-    dynamicgraph::Vector curfddAngAcc(3);
+    Eigen::Vector3d angularAcceleration;
+    Eigen::Vector3d curfddAngAcc;
     bool angAccSet = true;
 
     if (inputFormat(5))
@@ -480,8 +483,8 @@ namespace sotStateObservation
       {
         if (angVelSet)
           {
-            curfddAngAcc = stateObservation::tools::derivate
-              (lastVector_.segment<3>(9), angularVelocity, dt_);
+            stateObservation::tools::derivate
+              (lastVector_.segment<3>(9), angularVelocity,curfddAngAcc, dt_);
 
             angularAccelerations_.push_back(curfddAngAcc);
 
@@ -511,7 +514,7 @@ namespace sotStateObservation
           {
             outputSize +=3;
             output.resize(outputSize,false);
-            setSubvector(output, outputIndex, angularAcceleration);
+            output.segment<3>(outputIndex) = angularAcceleration;
             outputIndex +=3;
           }
         else
@@ -519,12 +522,12 @@ namespace sotStateObservation
             ("There is nothing to reconstruct the angular acceleration !");
       }
 
-    setSubvector(lastVector_, 0, position);
-    setSubvector(lastVector_, 3, orientation);
-    setSubvector(lastVector_, 6, linearVelocity);
-    setSubvector(lastVector_, 9, angularVelocity);
-    setSubvector(lastVector_, 12, linearAcceleration);
-    setSubvector(lastVector_, 15, angularAcceleration);
+    lastVector_.segment<3>(0) =position;
+    lastVector_.segment<3>(3)= orientation;
+    lastVector_.segment<3>(6)= linearVelocity;
+    lastVector_.segment<3>(9)= angularVelocity;
+    lastVector_.segment<3>(12)= linearAcceleration;
+    lastVector_.segment<3>(15)= angularAcceleration;
 
     return output;
 

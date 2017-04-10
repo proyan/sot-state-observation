@@ -102,8 +102,14 @@ namespace sotStateObservation
             /// Methods
             void getInputs(const int& time);
             void computeOdometry(const int& time);
-            stateObservation::Matrix4 regulateOdometryWithRef(const stateObservation::Matrix4& posEnc, const stateObservation::Vector& posRef, double alpha);
-            stateObservation::Matrix4 homogeneousMatricesAverage(const stateObservation::Matrix4& m1, const stateObservation::Matrix4& m2, double alpha);
+            dynamicgraph::sot::MatrixHomogeneous
+              regulateOdometryWithRef(const dynamicgraph::sot::MatrixHomogeneous& posEnc,
+                                      const stateObservation::Vector& posRef,
+                                      double alpha);
+            dynamicgraph::sot::MatrixHomogeneous
+              homogeneousMatricesAverage(const dynamicgraph::sot::MatrixHomogeneous& m1,
+                                         const dynamicgraph::sot::MatrixHomogeneous& m2,
+                                         double alpha);
 
             /// Signals
             dynamicgraph::SignalPtr <MatrixHomogeneous, int> leftFootPositionSIN_;
@@ -112,8 +118,8 @@ namespace sotStateObservation
             dynamicgraph::SignalPtr <MatrixHomogeneous, int> rightFootPositionSIN_;
             dynamicgraph::SignalPtr <Vector, int> forceRightFootSIN_;
 
-            dynamicgraph::SignalPtr <Matrix, int> leftFootPositionRefSIN_;
-            dynamicgraph::SignalPtr <Matrix, int> rightFootPositionRefSIN_;
+            dynamicgraph::SignalPtr <MatrixHomogeneous, int> leftFootPositionRefSIN_;
+            dynamicgraph::SignalPtr <MatrixHomogeneous, int> rightFootPositionRefSIN_;
 
             dynamicgraph::SignalPtr <Vector, int> stackOfSupportContactsSIN_;
 
@@ -126,18 +132,22 @@ namespace sotStateObservation
             /// Parameters
             double forceThreshold_, time_;
 
-            std::vector<stateObservation::Matrix4,Eigen::aligned_allocator<Matrix4> > inputHomoPosition_;
+            std::vector<MatrixHomogeneous,Eigen::aligned_allocator<MatrixHomogeneous> >
+              inputHomoPosition_;
             std::vector<stateObservation::Vector6,Eigen::aligned_allocator<Vector6> > inputPosition_;
-            std::vector<stateObservation::Matrix4,Eigen::aligned_allocator<Matrix4> > referenceHomoPosition_;
-            std::vector<stateObservation::Vector6,Eigen::aligned_allocator<Vector6> > referencePosition_;
+            std::vector<MatrixHomogeneous,Eigen::aligned_allocator<MatrixHomogeneous> >
+              referenceHomoPosition_;
+            std::vector<stateObservation::Vector6,Eigen::aligned_allocator<Vector6> >
+              referencePosition_;
             std::vector<stateObservation::Vector6,Eigen::aligned_allocator<Vector6> > inputForces_;
 
             stateObservation::Vector stackOfSupportContacts_;
             double supportContactsNbr_;
             int pivotSupport_;
 
-            std::vector<stateObservation::Matrix4,Eigen::aligned_allocator<Matrix4> > odometryHomoPosition_;
-            stateObservation::Matrix4 odometryFreeFlyer_;
+            std::vector<MatrixHomogeneous,Eigen::aligned_allocator<MatrixHomogeneous> >
+              odometryHomoPosition_;
+            MatrixHomogeneous odometryFreeFlyer_;
 
             struct Optimization
             {
@@ -145,7 +155,7 @@ namespace sotStateObservation
                 // for regulateOdometryWithRef
                 stateObservation::Vector6 posUTheta_;
                 stateObservation::Matrix3 rot_;
-                stateObservation::Matrix4 homo_;
+                dynamicgraph::sot::MatrixHomogeneous homo_;
                 stateObservation::AngleAxis aa_;
 
                 // for computeOdometry

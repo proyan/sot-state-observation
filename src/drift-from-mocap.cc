@@ -86,17 +86,14 @@ namespace sotStateObservation
   ::dynamicgraph::Vector& DriftFromMocap::computeDriftVector
               (::dynamicgraph::Vector & drift, const int& inTime)
   {
-    const ::dynamicgraph::sot::MatrixHomogeneous & driftMatrix = driftSOUT(inTime);
+    if(drift.size() !=6)
+      drift.resize(6);
 
-    ::dynamicgraph::sot::MatrixRotation R;
-    ::dynamicgraph::sot::VectorUTheta ut;
-    ::dynamicgraph::Vector t(3);
-    driftMatrix.extract(R);
-    driftMatrix.extract(t);
-    ut.fromMatrix(R);
-    drift.resize(6);
-    setSubvector(drift,0,t);
-    setSubvector(drift,3,static_cast<dynamicgraph::Vector>(ut));
+    const ::dynamicgraph::sot::MatrixHomogeneous & driftMatrix = driftSOUT(inTime);
+    const dynamicgraph::sot::VectorUTheta ut(driftMatrix.linear());
+    const Eigen::Vector3d& t = driftMatrix.translation();
+    drift.head<3>() = t;
+    drift.segment<3>(3) = ut.angle()* ut.axis();
 
     return drift;
   }
@@ -113,17 +110,14 @@ namespace sotStateObservation
   ::dynamicgraph::Vector& DriftFromMocap::computeDriftInvVector
               (::dynamicgraph::Vector & driftInv, const int& inTime)
   {
-    const ::dynamicgraph::sot::MatrixHomogeneous & driftInvMatrix = driftInvSOUT(inTime);
+    if(driftInv.size() != 6)
+      driftInv.resize(6);
 
-    ::dynamicgraph::sot::MatrixRotation R;
-    ::dynamicgraph::sot::VectorUTheta ut;
-    ::dynamicgraph::Vector t(3);
-    driftInvMatrix.extract(R);
-    driftInvMatrix.extract(t);
-    ut.fromMatrix(R);
-    driftInv.resize(6);
-    setSubvector(driftInv,0,t);
-    setSubvector(driftInv,3,static_cast<dynamicgraph::Vector>(ut));
+    const ::dynamicgraph::sot::MatrixHomogeneous & driftInvMatrix = driftInvSOUT(inTime);
+    const dynamicgraph::sot::VectorUTheta ut(driftInvMatrix.linear());
+
+    driftInv.head<3>() = driftInvMatrix.translation();
+    driftInv.segment<3>(3) = ut.angle()*ut.axis();
 
     return driftInv;
   }

@@ -25,10 +25,7 @@
 #include <dynamic-graph/signal-time-dependent.h>
 #include <dynamic-graph/linear-algebra.h>
 
-#include <sot/core/matrix-homogeneous.hh>
-#include <sot/core/vector-utheta.hh>
-#include <sot/core/vector-roll-pitch-yaw.hh>
-
+#include <sot/core/matrix-geometry.hh>
 #include <state-observation/tools/miscellaneous-algorithms.hpp>
 #include <state-observation/tools/hrp2.hpp>
 
@@ -543,7 +540,7 @@ namespace sotStateObservation
             stateObservation::Vector config_;
             bool externalContactPresence_;
 
-            std::vector<stateObservation::Matrix4,Eigen::aligned_allocator<stateObservation::Matrix4> > inputHomoPosition_;
+            std::vector<MatrixHomogeneous,Eigen::aligned_allocator<MatrixHomogeneous> > inputHomoPosition_;
             std::vector<stateObservation::Vector6,Eigen::aligned_allocator<stateObservation::Vector6> > inputPosition_;
             std::vector<stateObservation::Vector6,Eigen::aligned_allocator<stateObservation::Vector6> > inputVelocity_;
             std::vector<stateObservation::Vector6,Eigen::aligned_allocator<stateObservation::Vector6> > inputForces_;

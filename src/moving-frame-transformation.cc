@@ -10,6 +10,7 @@
 #include <dynamic-graph/factory.h>
 
 #include <sot-state-observation/moving-frame-transformation.hh>
+#include <sot-state-observation/tools/miscellaneous-algorithms.hpp>
 
 
 namespace sotStateObservation
@@ -42,7 +43,7 @@ namespace sotStateObservation
              "MovingFrameTransformation("+inName+")::output(vector)::gA0"),
     gP0SOUT( gMlSIN<<lP0SIN,
              "MovingFrameTransformation("+inName+")::output(vector)::gP0"),
-    yawRemoved_(false), pointMode_(false)
+                     yawRemoved_(false), pointMode_(false)
   {
     signalRegistration (gMlSIN);
     signalRegistration (gVlSIN);
@@ -59,9 +60,8 @@ namespace sotStateObservation
 
 
     dynamicgraph::Vector velocity (6);
-    dynamicgraph::Matrix homoMatrix(4,4);
-
-    homoMatrix.setIdentity();
+    const dynamicgraph::sot::MatrixHomogeneous homoMatrix = 
+      dynamicgraph::sot::MatrixHomogeneous::Identity();
 
     gMlSIN.setConstant(homoMatrix);
     gVlSIN.setConstant(velocity);
@@ -110,17 +110,10 @@ namespace sotStateObservation
 
   void removeYaw(::dynamicgraph::sot::MatrixHomogeneous & M)
   {
-    dynamicgraph::sot::VectorUTheta v;
-
-    dynamicgraph::sot::MatrixRotation R;
-    dynamicgraph::Vector p(3);
-    M.extract(p);
-    M.extract(R);
-    v.fromMatrix(R);
-    v(2)=0;
-    v.toMatrix(R);
-
-    M.buildFrom(R,p);
+    dynamicgraph::sot::VectorUTheta v(M.linear());
+    v.axis()(2)=0.0;
+    M.linear() = v.toRotationMatrix();
+    return;
   }
 
   MovingFrameTransformation::~MovingFrameTransformation()
@@ -137,31 +130,25 @@ namespace sotStateObservation
     const dynamicgraph::Vector &lV0 = lV0SIN(inTime);
 
     if (yawRemoved_)
-    {
+      {
 
         gVl(2) =0;
         removeYaw(gMl);
-    }
+      }
 
-    dynamicgraph::Matrix gRl(3,3);
-
-    dynamicgraph::Vector lT0(3);
-
-
-    gMl.extract(gRl);
-
-    lM0.extract(lT0);
+    const dynamicgraph::sot::MatrixRotation& gRl = gMl.linear();
+    const Eigen::Vector3d& lT0 = lM0.translation();
 
     if (pointMode_)
-    {
-      velocity.resize(3);
-    }
+      {
+        velocity.resize(3);
+      }
     else
-    {
-      velocity.resize(6);
-    }
+      {
+        velocity.resize(6);
+      }
 
-    const dynamicgraph::Vector& gOmegal = gVl.segment<3>(3);
+    const Eigen::Vector3d& gOmegal = gVl.segment<3>(3);
 
     velocity.head<3>() = gOmegal.cross(gRl * lT0)
       + gRl * lV0.head<3>()
@@ -175,7 +162,7 @@ namespace sotStateObservation
   }
 
 
-    dynamicgraph::Vector& MovingFrameTransformation::computegA0
+  dynamicgraph::Vector& MovingFrameTransformation::computegA0
   (dynamicgraph::Vector & acceleration, const int& inTime)
   {
     dynamicgraph::sot::MatrixHomogeneous gMl(gMlSIN(inTime));
@@ -188,32 +175,26 @@ namespace sotStateObservation
     const dynamicgraph::Vector &lA0 = lA0SIN(inTime);
 
     if (yawRemoved_)
-    {
+      {
         gAl(2) = 0;
         gVl(2) = 0;
         removeYaw(gMl);
-    }
+      }
 
-    dynamicgraph::Matrix gRl(3,3);
-
-    dynamicgraph::Vector lT0(3);
-
-    gMl.extract(gRl);
-
-    lM0.extract(lT0);
+    const dynamicgraph::sot::MatrixRotation& gRl = gMl.linear();
+    const Eigen::Vector3d& lT0 = lM0.translation();
 
     if (pointMode_)
-    {
-      acceleration.resize(3);
-    }
+      {
+        acceleration.resize(3);
+      }
     else
-    {
-      acceleration.resize(6);
-    }
+      {
+        acceleration.resize(6);
+      }
 
 
     const Eigen::Vector3d& gOmegal = gVl.segment<3>(3);
-
     const Eigen::Vector3d& gOmegaDotl = gAl.segment<3>(3);
 
 
@@ -239,9 +220,9 @@ namespace sotStateObservation
 
 
     if (yawRemoved_)
-    {
+      {
         removeYaw(gMl);
-    }
+      }
 
     homo = gMl * lM0;
 
@@ -250,38 +231,28 @@ namespace sotStateObservation
     return homo;
   }
 
-    dynamicgraph::Vector& MovingFrameTransformation::computegP0
+  dynamicgraph::Vector& MovingFrameTransformation::computegP0
   (dynamicgraph::Vector & position, const int& inTime)
   {
-
-    if (pointMode_)
-    {
-      dynamicgraph::sot::MatrixHomogeneous gMl(gMlSIN(inTime));
-      const dynamicgraph::Vector & lP0 = lP0SIN(inTime);
-
-
-      if (yawRemoved_)
-      {
-        removeYaw(gMl);
-      }
-
-      gMl.multiply(lP0,position);
-    }
-    else
-    {
-      dynamicgraph::sot::MatrixHomogeneous gM0(gM0SOUT(inTime));
-      ::dynamicgraph::sot::MatrixRotation R;
-      ::dynamicgraph::sot::VectorUTheta ut;
-      ::dynamicgraph::Vector t(3);
-      gM0.extract(R);
-      gM0.extract(t);
-      ut.fromMatrix(R);
+    if(position.size()!=6)
       position.resize(6);
-      position.head<3> = t;
-      position.tail<3> = ut;
-    }
+    if (pointMode_)
+      {
+        dynamicgraph::sot::MatrixHomogeneous gMl(gMlSIN(inTime));
+        const Eigen::Vector3d & lP0 = lP0SIN(inTime);
+        
+        
+        if (yawRemoved_)
+          {
+            removeYaw(gMl);
+          }
+        
+        position = gMl * lP0;
+      }
+    else
+      homogeneousMatrixToVector6(gM0SOUT(inTime),position);
 
     return position;
   }
-
+  
 }

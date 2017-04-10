@@ -61,6 +61,7 @@ SET(${PROJECT_NAME}_HEADERS
     include/sot-state-observation/estimator-interface.hh
     include/sot-state-observation/from-local-to-global-frame.hh
     include/sot-state-observation/filter.hh
+    include/sot-state-observation/tools/miscellaneous-algorithms.hpp
 )
 
 # Add subdirectories.

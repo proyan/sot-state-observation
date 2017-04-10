@@ -25,7 +25,7 @@
 #include <dynamic-graph/signal-time-dependent.h>
 #include <dynamic-graph/linear-algebra.h>
 
-#include <sot/core/matrix-geoemtry.hh>
+#include <sot/core/matrix-geometry.hh>
 #include <state-observation/tools/miscellaneous-algorithms.hpp>
 
 
@@ -120,7 +120,7 @@ namespace sotStateObservation
             /// Parameters
             double forceThreshold_, time_;
             unsigned int nbSupport_;
-            dynamicgraph::Vector supportPos1_, supportPos2_, forceSupport1_, forceSupport2_;
+            Eigen::Matrix<double,6,1> supportPos1_, supportPos2_, forceSupport1_, forceSupport2_;
             MatrixHomogeneous homoSupportPos1_, homoSupportPos2_;
       };
 
